@@ -49,7 +49,7 @@ jobs:
             type=semver,pattern={{major}}
             # On manual dispatch, tags with the branch name (e.g. main)
             type=ref,event=branch
-            # Also publish with v-prefix to match existing v0.1.0 convention
+            # Also publish with v-prefix to match the tag form (e.g. v0.2.0)
             type=semver,pattern=v{{version}}
 
       - name: Build and push

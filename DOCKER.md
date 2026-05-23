@@ -3,6 +3,7 @@
 Run **loggen** inside an Alpine-based container with a host directory mounted for the generated logs.
 
 **Image on Docker Hub:** [`sheru/loggen`](https://hub.docker.com/r/sheru/loggen)
+**Platforms:** `linux/amd64`, `linux/arm64` (works on Intel/AMD, Apple Silicon, AWS Graviton, Raspberry Pi 4/5)
 
 ---
 
@@ -15,7 +16,7 @@ docker pull sheru/loggen:latest
 Or pin to a specific version:
 
 ```bash
-docker pull sheru/loggen:v0.1.0
+docker pull sheru/loggen:v0.2.0
 ```
 
 Verify the image is on your machine:
@@ -23,8 +24,6 @@ Verify the image is on your machine:
 ```bash
 docker images sheru/loggen
 ```
-
-> Prefer building from source? See section [Build From Source](#8-build-from-source-alternative) at the bottom.
 
 ---
 
@@ -230,59 +229,7 @@ tail -f /loggen/fake/log/auth_bruteforce.log
 
 ---
 
-## 8. Build From Source (Alternative)
-
-If you'd rather build the image locally instead of pulling, clone the repo then run:
-
-```bash
-docker build -t sheru/loggen:latest .
-```
-
-This produces the same image as the one on Docker Hub. The first build takes a few minutes because `pydantic-core` is compiled from source; subsequent builds are cached and fast.
-
-After building, use it exactly the same way as the pulled image (sections 2–7 above).
-
----
-
-## 9. Releasing a New Version (CI/CD)
-
-A GitHub Actions workflow at [`.github/workflows/docker-publish.yml`](.github/workflows/docker-publish.yml) automatically builds and pushes a **multi-arch** image (`linux/amd64` + `linux/arm64`) to Docker Hub whenever you push a `v*` git tag.
-
-### One-time setup (per GitHub repository)
-
-1. **Create a Docker Hub Personal Access Token**
-   - Go to https://app.docker.com/settings/personal-access-tokens
-   - Click **Generate new token**, scope **Read & Write**, copy the value.
-
-2. **Add GitHub secrets** in your repo settings → *Settings → Secrets and variables → Actions → New repository secret*:
-   - `DOCKERHUB_USERNAME` = `sheru`
-   - `DOCKERHUB_TOKEN` = *(paste the token from step 1)*
-
-### Cutting a release
-
-```bash
-# Bump version in pyproject.toml first, commit, then:
-git tag v0.2.0
-git push origin v0.2.0
-```
-
-The workflow will:
-
-- Trigger on the `v0.2.0` tag push.
-- Build for `linux/amd64` and `linux/arm64`.
-- Push the following tags to Docker Hub:
-  - `sheru/loggen:0.2.0`
-  - `sheru/loggen:0.2`
-  - `sheru/loggen:0`
-  - `sheru/loggen:v0.2.0`
-  - `sheru/loggen:latest`
-- Use the GitHub Actions cache for faster subsequent builds.
-
-You can also trigger a build manually from the **Actions** tab → *Build and publish Docker image* → *Run workflow*.
-
----
-
-## 10. Cleanup
+## 8. Cleanup
 
 Remove generated logs:
 ```bash
@@ -291,7 +238,7 @@ rm -rf /loggen/fake/log/*
 
 Remove the image:
 ```bash
-docker rmi sheru/loggen:latest sheru/loggen:v0.1.0
+docker rmi sheru/loggen:latest sheru/loggen:v0.2.0
 ```
 
 ---
@@ -346,8 +293,13 @@ The container's `loggen` user is UID/GID 1000. If your host UID differs, either:
 **`docker: command not found`**
 Install Docker first: https://docs.docker.com/engine/install/
 
-**Image build fails on Rust compilation (only if building from source)**
-The build needs `cargo` and `rust` packages (included in the Dockerfile). If your build host is memory-constrained, increase Docker's resource limits.
-
 **Empty output file**
 Make sure you used `--output <filename>` (without `--output`, logs go to stdout instead of the volume-mounted directory).
+
+---
+
+## For Developers / Contributors
+
+Want to build the image from source, do a multi-arch build yourself, or cut a new release? See [DEVELOPING.md](https://github.com/sheru-pan/loggen/blob/main/DEVELOPING.md) in the source repository.
+
+Source code: https://github.com/sheru-pan/loggen
