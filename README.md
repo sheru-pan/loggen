@@ -28,26 +28,40 @@ A Python CLI tool that generates realistic, machine-detectable security logs for
 
 ## Installation
 
-### Using Virtual Environment (Recommended)
+### From PyPI (Recommended)
 
 ```bash
-# Clone or navigate to the project
-cd loggen
+pip install loggen-cli
+loggen --help
+```
 
-# Create virtual environment
+Or with [pipx](https://pipx.pypa.io) for an isolated install:
+
+```bash
+pipx install loggen-cli
+```
+
+### From Docker Hub
+
+```bash
+docker pull sheru/loggen:latest
+docker run --rm -v /loggen/fake/log:/logs sheru/loggen \
+  loggen auth bruteforce --count 100 --output attack.log
+```
+
+See [DOCKER.md](DOCKER.md) for the full Docker workflow.
+
+### From Source (developer install)
+
+```bash
+git clone git@github.com:sheru-pan/loggen.git
+cd loggen
 python3 -m venv venv
 source venv/bin/activate
-
-# Install in editable mode
 pip install -e .
 ```
 
-### Using pipx
-
-```bash
-pipx install -e .
-loggen --help
-```
+See [DEVELOPING.md](DEVELOPING.md) for contributor notes.
 
 ## Quick Start
 

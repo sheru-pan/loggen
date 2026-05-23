@@ -134,7 +134,91 @@ When manually dispatched from a branch, the image is tagged with the branch name
 
 ---
 
-## 3.5. Auto-Syncing the Docker Hub Overview Page
+## 3.5. Publishing to PyPI
+
+A workflow at [.github/workflows/pypi-publish.yml](.github/workflows/pypi-publish.yml) publishes the `loggen-cli` package to PyPI (and TestPyPI for pre-releases) using **Trusted Publishing** (OIDC) — no PyPI API tokens to manage.
+
+### Routing rules
+
+| Git tag pushed                | Index that receives the release |
+|-------------------------------|---------------------------------|
+| `v0.3.0`, `v1.0.0` (stable)   | https://pypi.org/project/loggen-cli/ |
+| `v0.3.0-rc1`, `v0.3.0-beta1`  | https://test.pypi.org/project/loggen-cli/ |
+
+You can also dispatch the workflow manually from the Actions tab and choose `pypi` or `testpypi` as the target.
+
+### One-time setup: register Trusted Publishers
+
+This needs to be done **once per index** (TestPyPI and PyPI).
+
+**Step A — Register on PyPI (the real index)**
+1. Sign up / log in at https://pypi.org → Account settings
+2. Go to **Publishing** → **Add a new pending publisher**
+3. Fill in:
+   - **PyPI project name:** `loggen-cli`
+   - **Owner:** `sheru-pan`
+   - **Repository name:** `loggen`
+   - **Workflow name:** `pypi-publish.yml`
+   - **Environment name:** `pypi`
+4. Click **Add**
+
+**Step B — Register on TestPyPI**
+1. Sign up / log in at https://test.pypi.org → Account settings → Publishing → Add pending publisher
+2. Same fields as above, except **Environment name:** `testpypi`
+
+**Step C — Create the matching GitHub environments**
+1. https://github.com/sheru-pan/loggen/settings/environments → New environment
+2. Create one called `pypi` (no settings required — empty config is fine)
+3. Create another called `testpypi`
+
+> Why two GitHub environments? Each maps 1:1 to a PyPI Trusted Publisher entry. GitHub also lets you add protection rules (required reviewers, branch restrictions) to the `pypi` environment so an accidental tag push doesn't ship to real PyPI.
+
+### Cutting a PyPI release
+
+```bash
+# 1. Bump version in pyproject.toml and loggen/__init__.py to 0.X.Y
+git add pyproject.toml loggen/__init__.py
+git commit -m "Bump version to 0.X.Y"
+git push
+
+# 2a. For a real release (publishes to PyPI):
+git tag v0.X.Y
+git push origin v0.X.Y
+
+# 2b. For a pre-release (publishes to TestPyPI):
+git tag v0.X.Y-rc1
+git push origin v0.X.Y-rc1
+```
+
+The same tag push also triggers the Docker image build workflow — so one tag publishes both the Python package and the Docker image. Be sure to **bump the version in `pyproject.toml` and `loggen/__init__.py`** before tagging; the build uses these values, not the git tag.
+
+### Local build verification
+
+Before tagging, you can build and validate the package locally:
+
+```bash
+python -m pip install --upgrade build twine
+rm -rf dist/ build/ *.egg-info
+python -m build
+python -m twine check dist/*
+# Optionally test-install the wheel in a clean venv:
+python3 -m venv /tmp/test && /tmp/test/bin/pip install dist/*.whl && /tmp/test/bin/loggen --help
+```
+
+### Troubleshooting
+
+**"invalid-publisher" error from PyPI**
+The Trusted Publisher config doesn't match the workflow exactly. Verify on PyPI (Publishing tab) that owner, repository, workflow filename, and environment name all match the values in `pypi-publish.yml`.
+
+**"File already exists" error**
+PyPI does not allow re-uploading the same version, even if you delete it. Bump the version in `pyproject.toml` and tag again.
+
+**Pre-release tag accidentally went to real PyPI**
+Check the tag format. The workflow routes to TestPyPI only if the tag contains `-rc`, `-alpha`, or `-beta`. A tag like `v0.3.0.rc1` (period instead of hyphen) will be treated as stable. Use `v0.3.0-rc1`.
+
+---
+
+## 3.6. Auto-Syncing the Docker Hub Overview Page
 
 A second workflow at [.github/workflows/dockerhub-description.yml](.github/workflows/dockerhub-description.yml) keeps the Docker Hub repository overview in sync with [DOCKER.md](DOCKER.md) — so you never have to log in to hub.docker.com and copy-paste again.
 
