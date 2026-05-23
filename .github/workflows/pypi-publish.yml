@@ -3,7 +3,7 @@ name: Publish to PyPI
 on:
   push:
     tags:
-      - 'v*'
+      - 'pypi-v*'    # e.g. pypi-v0.2.0 -> PyPI; pypi-v0.3.0-rc1 -> TestPyPI
   workflow_dispatch:
     inputs:
       target:
@@ -52,6 +52,7 @@ jobs:
     if: |
       (github.event_name == 'workflow_dispatch' && inputs.target == 'testpypi') ||
       (github.event_name == 'push' &&
+        startsWith(github.ref_name, 'pypi-v') &&
         (contains(github.ref_name, '-rc') ||
          contains(github.ref_name, '-alpha') ||
          contains(github.ref_name, '-beta')))
@@ -82,8 +83,10 @@ jobs:
     if: |
       (github.event_name == 'workflow_dispatch' && inputs.target == 'pypi') ||
       (github.event_name == 'push' &&
-        startsWith(github.ref_name, 'v') &&
-        !contains(github.ref_name, '-'))
+        startsWith(github.ref_name, 'pypi-v') &&
+        !contains(github.ref_name, '-rc') &&
+        !contains(github.ref_name, '-alpha') &&
+        !contains(github.ref_name, '-beta'))
     runs-on: ubuntu-latest
 
     environment:

@@ -81,7 +81,7 @@ docker buildx imagetools inspect sheru/loggen:latest
 
 ## 3. Releasing a New Version (GitHub Actions CI/CD)
 
-A GitHub Actions workflow at [.github/workflows/docker-publish.yml](.github/workflows/docker-publish.yml) automatically builds a multi-arch image and pushes it to Docker Hub whenever a `v*` git tag is pushed to GitHub.
+A GitHub Actions workflow at [.github/workflows/docker-publish.yml](.github/workflows/docker-publish.yml) automatically builds a multi-arch image and pushes it to Docker Hub whenever a `docker-v*` git tag is pushed to GitHub.
 
 ### One-time setup (per repository)
 
@@ -97,31 +97,28 @@ A GitHub Actions workflow at [.github/workflows/docker-publish.yml](.github/work
 
 ### Cutting a release
 
+The Docker workflow triggers only on tags matching `docker-v*` — PyPI releases use a separate prefix (see §3.5), so the two release cycles are independent.
+
 ```bash
-# 1. Bump the version in pyproject.toml
-#    Edit version = "0.X.Y"
+# 1. (Optional) bump the version in pyproject.toml if this is a coordinated
+#    release with PyPI; otherwise the version string only affects PyPI.
 
-# 2. Commit the version bump
-git add pyproject.toml
-git commit -m "Bump version to 0.X.Y"
-git push
-
-# 3. Tag and push the tag — this triggers the workflow
-git tag v0.X.Y
-git push origin v0.X.Y
+# 2. Tag and push — this triggers the Docker workflow
+git tag docker-v0.X.Y
+git push origin docker-v0.X.Y
 ```
 
 ### What the workflow produces
 
-When tag `v0.2.0` is pushed, the workflow publishes these Docker Hub tags pointing at the same multi-arch image:
+When tag `docker-v0.2.0` is pushed, the workflow publishes these Docker Hub tags pointing at the same multi-arch image:
 
-| Tag | Source |
-|-----|--------|
-| `sheru/loggen:0.2.0` | semver full |
-| `sheru/loggen:0.2`   | semver minor |
-| `sheru/loggen:0`     | semver major |
-| `sheru/loggen:v0.2.0`| original tag (kept for backwards-compat with v-prefix convention) |
-| `sheru/loggen:latest`| only updated for the highest semver tag — won't move backwards if you push `v0.1.5` later |
+| Tag | Notes |
+|-----|-------|
+| `sheru/loggen:0.2.0`  | version (suffix stripped from `docker-v0.2.0`) |
+| `sheru/loggen:0.2`    | minor (only for stable tags) |
+| `sheru/loggen:0`      | major (only for stable tags) |
+| `sheru/loggen:v0.2.0` | v-prefixed form |
+| `sheru/loggen:latest` | only for stable tags — pre-release tags like `docker-v0.3.0-rc1` do not move `:latest` |
 
 ### Manual trigger (without a tag)
 
@@ -140,10 +137,12 @@ A workflow at [.github/workflows/pypi-publish.yml](.github/workflows/pypi-publis
 
 ### Routing rules
 
-| Git tag pushed                | Index that receives the release |
-|-------------------------------|---------------------------------|
-| `v0.3.0`, `v1.0.0` (stable)   | https://pypi.org/project/loggen-cli/ |
-| `v0.3.0-rc1`, `v0.3.0-beta1`  | https://test.pypi.org/project/loggen-cli/ |
+The PyPI workflow triggers only on tags matching `pypi-v*`. The Docker workflow uses `docker-v*` (see §3) so the two release cycles are independent.
+
+| Git tag pushed                              | Index that receives the release |
+|---------------------------------------------|---------------------------------|
+| `pypi-v0.3.0`, `pypi-v1.0.0` (stable)       | https://pypi.org/project/loggen-cli/ |
+| `pypi-v0.3.0-rc1`, `pypi-v0.3.0-beta1`      | https://test.pypi.org/project/loggen-cli/ |
 
 You can also dispatch the workflow manually from the Actions tab and choose `pypi` or `testpypi` as the target.
 
@@ -182,15 +181,23 @@ git commit -m "Bump version to 0.X.Y"
 git push
 
 # 2a. For a real release (publishes to PyPI):
-git tag v0.X.Y
-git push origin v0.X.Y
+git tag pypi-v0.X.Y
+git push origin pypi-v0.X.Y
 
 # 2b. For a pre-release (publishes to TestPyPI):
-git tag v0.X.Y-rc1
-git push origin v0.X.Y-rc1
+git tag pypi-v0.X.Y-rc1
+git push origin pypi-v0.X.Y-rc1
 ```
 
-The same tag push also triggers the Docker image build workflow — so one tag publishes both the Python package and the Docker image. Be sure to **bump the version in `pyproject.toml` and `loggen/__init__.py`** before tagging; the build uses these values, not the git tag.
+PyPI and Docker now have **independent release cycles** — pushing `pypi-v0.3.0` does NOT trigger a Docker image build. To ship both together, push both tags on the same commit:
+
+```bash
+git tag pypi-v0.3.0
+git tag docker-v0.3.0
+git push origin pypi-v0.3.0 docker-v0.3.0
+```
+
+Be sure to **bump the version in `pyproject.toml` and `loggen/__init__.py`** before tagging — the PyPI build reads the version from `pyproject.toml`, not from the git tag.
 
 ### Local build verification
 
@@ -214,7 +221,10 @@ The Trusted Publisher config doesn't match the workflow exactly. Verify on PyPI 
 PyPI does not allow re-uploading the same version, even if you delete it. Bump the version in `pyproject.toml` and tag again.
 
 **Pre-release tag accidentally went to real PyPI**
-Check the tag format. The workflow routes to TestPyPI only if the tag contains `-rc`, `-alpha`, or `-beta`. A tag like `v0.3.0.rc1` (period instead of hyphen) will be treated as stable. Use `v0.3.0-rc1`.
+Check the tag format. The workflow routes to TestPyPI only if the tag contains `-rc`, `-alpha`, or `-beta`. A tag like `pypi-v0.3.0.rc1` (period instead of hyphen) will be treated as stable. Use `pypi-v0.3.0-rc1`.
+
+**Nothing happened when I pushed a tag**
+Check the prefix. The PyPI workflow ignores anything that doesn't start with `pypi-v`. The Docker workflow ignores anything that doesn't start with `docker-v`. A bare `v0.3.0` tag won't trigger either workflow.
 
 ---
 

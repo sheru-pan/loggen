@@ -3,8 +3,8 @@ name: Build and publish Docker image
 on:
   push:
     tags:
-      - 'v*'           # Triggers on tags like v0.1.0, v1.2.3, v2.0.0-rc1
-  workflow_dispatch:   # Allows manual trigger from the Actions tab
+      - 'docker-v*'      # e.g. docker-v0.2.0, docker-v1.0.0, docker-v0.3.0-rc1
+  workflow_dispatch:     # Allows manual trigger from the Actions tab
 
 env:
   IMAGE_NAME: sheru/loggen
@@ -23,6 +23,31 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Extract version from tag
+        id: ver
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/docker-v* ]]; then
+            VERSION="${GITHUB_REF_NAME#docker-v}"
+            MAJOR="${VERSION%%.*}"
+            REST="${VERSION#*.}"
+            MINOR="$MAJOR.${REST%%.*}"
+            if [[ "$VERSION" == *-* ]]; then
+              IS_STABLE=false
+            else
+              IS_STABLE=true
+            fi
+          else
+            VERSION=""
+            MAJOR=""
+            MINOR=""
+            IS_STABLE=false
+          fi
+          echo "version=$VERSION"   >> "$GITHUB_OUTPUT"
+          echo "major=$MAJOR"       >> "$GITHUB_OUTPUT"
+          echo "minor=$MINOR"       >> "$GITHUB_OUTPUT"
+          echo "is_stable=$IS_STABLE" >> "$GITHUB_OUTPUT"
+          echo "Resolved version=$VERSION major=$MAJOR minor=$MINOR is_stable=$IS_STABLE"
+
       - name: Set up QEMU (for arm64 emulation)
         uses: docker/setup-qemu-action@v3
         with:
@@ -37,20 +62,20 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Extract Docker metadata (tags, labels)
+      - name: Build Docker tag list
         id: meta
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.IMAGE_NAME }}
           tags: |
-            # On a tag push like v0.2.0, produces tags: 0.2.0, 0.2, 0, latest
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{major}}
-            # On manual dispatch, tags with the branch name (e.g. main)
-            type=ref,event=branch
-            # Also publish with v-prefix to match the tag form (e.g. v0.2.0)
-            type=semver,pattern=v{{version}}
+            # On a tag push: 0.2.0, 0.2, 0, v0.2.0, latest (latest only for stable)
+            type=raw,value=${{ steps.ver.outputs.version }},enable=${{ steps.ver.outputs.version != '' }}
+            type=raw,value=${{ steps.ver.outputs.minor }},enable=${{ steps.ver.outputs.is_stable == 'true' }}
+            type=raw,value=${{ steps.ver.outputs.major }},enable=${{ steps.ver.outputs.is_stable == 'true' }}
+            type=raw,value=v${{ steps.ver.outputs.version }},enable=${{ steps.ver.outputs.version != '' }}
+            type=raw,value=latest,enable=${{ steps.ver.outputs.is_stable == 'true' }}
+            # On manual dispatch from a branch (no version), tag with the branch name
+            type=ref,event=branch,enable=${{ steps.ver.outputs.version == '' }}
 
       - name: Build and push
         uses: docker/build-push-action@v5
@@ -65,4 +90,5 @@ jobs:
           provenance: false
 
       - name: Inspect published manifest
-        run: docker buildx imagetools inspect ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}
+        if: steps.ver.outputs.version != ''
+        run: docker buildx imagetools inspect ${{ env.IMAGE_NAME }}:${{ steps.ver.outputs.version }}
