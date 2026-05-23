@@ -49,6 +49,9 @@ loggen = "loggen.cli:app"
 [tool.setuptools]
 packages = ["loggen", "loggen.models", "loggen.generators", "loggen.mitre", "loggen.outputs", "loggen.utils"]
 
+[tool.setuptools.package-data]
+"loggen.mitre" = ["*.json"]
+
 [tool.black]
 line-length = 100
 target-version = ['py39', 'py310', 'py311']

@@ -1,0 +1,482 @@
+{
+  "T1078": {
+    "name": "Valid Accounts",
+    "tactic": "Initial Access",
+    "generators": ["auth"],
+    "scenarios": ["successful"],
+    "description": "Adversaries may obtain and abuse credentials of existing accounts",
+    "malicious_ratio": 0.6
+  },
+  "T1078.001": {
+    "name": "Valid Accounts: Default Accounts",
+    "tactic": "Initial Access",
+    "generators": ["auth"],
+    "scenarios": ["default_credentials"],
+    "description": "Adversaries may obtain and abuse credentials of a default account",
+    "malicious_ratio": 0.8
+  },
+  "T1078.002": {
+    "name": "Valid Accounts: Domain Accounts",
+    "tactic": "Initial Access",
+    "generators": ["auth", "system"],
+    "scenarios": ["successful", "user"],
+    "description": "Adversaries may obtain and abuse credentials of a domain account",
+    "malicious_ratio": 0.6
+  },
+  "T1078.003": {
+    "name": "Valid Accounts: Local Accounts",
+    "tactic": "Initial Access",
+    "generators": ["auth"],
+    "scenarios": ["successful"],
+    "description": "Adversaries may obtain and abuse credentials of a local account",
+    "malicious_ratio": 0.6
+  },
+  "T1078.004": {
+    "name": "Valid Accounts: Cloud Accounts",
+    "tactic": "Initial Access",
+    "generators": ["cloud"],
+    "scenarios": ["console_login"],
+    "description": "Adversaries may obtain and abuse credentials of cloud accounts",
+    "malicious_ratio": 0.7
+  },
+  "T1190": {
+    "name": "Exploit Public-Facing Application",
+    "tactic": "Initial Access",
+    "generators": ["web", "ids"],
+    "scenarios": ["attack", "exploit"],
+    "description": "Adversaries may attempt to exploit a weakness in an Internet-facing host",
+    "malicious_ratio": 0.9
+  },
+  "T1133": {
+    "name": "External Remote Services",
+    "tactic": "Initial Access",
+    "generators": ["auth", "firewall"],
+    "scenarios": ["successful", "allowed"],
+    "description": "Adversaries may leverage external-facing remote services",
+    "malicious_ratio": 0.5
+  },
+  "T1566": {
+    "name": "Phishing",
+    "tactic": "Initial Access",
+    "generators": ["email"],
+    "scenarios": ["phishing"],
+    "description": "Adversaries may send phishing messages to gain access to victim systems",
+    "malicious_ratio": 0.9
+  },
+  "T1566.001": {
+    "name": "Phishing: Spearphishing Attachment",
+    "tactic": "Initial Access",
+    "generators": ["email"],
+    "scenarios": ["malware_attachment"],
+    "description": "Adversaries may send spearphishing emails with malicious attachments",
+    "malicious_ratio": 0.95
+  },
+  "T1566.002": {
+    "name": "Phishing: Spearphishing Link",
+    "tactic": "Initial Access",
+    "generators": ["email"],
+    "scenarios": ["phishing"],
+    "description": "Adversaries may send spearphishing emails with malicious links",
+    "malicious_ratio": 0.9
+  },
+  "T1059": {
+    "name": "Command and Scripting Interpreter",
+    "tactic": "Execution",
+    "generators": ["system"],
+    "scenarios": ["process"],
+    "description": "Adversaries may abuse command and script interpreters to execute commands",
+    "malicious_ratio": 0.7
+  },
+  "T1059.001": {
+    "name": "Command and Scripting Interpreter: PowerShell",
+    "tactic": "Execution",
+    "generators": ["system"],
+    "scenarios": ["process"],
+    "description": "Adversaries may abuse PowerShell commands and scripts for execution",
+    "malicious_ratio": 0.8
+  },
+  "T1059.003": {
+    "name": "Command and Scripting Interpreter: Windows Command Shell",
+    "tactic": "Execution",
+    "generators": ["system"],
+    "scenarios": ["process"],
+    "description": "Adversaries may abuse the Windows command shell for execution",
+    "malicious_ratio": 0.7
+  },
+  "T1053": {
+    "name": "Scheduled Task/Job",
+    "tactic": "Execution",
+    "generators": ["system"],
+    "scenarios": ["service"],
+    "description": "Adversaries may abuse task scheduling functionality",
+    "malicious_ratio": 0.6
+  },
+  "T1136": {
+    "name": "Create Account",
+    "tactic": "Persistence",
+    "generators": ["system", "cloud"],
+    "scenarios": ["user", "iam_changes"],
+    "description": "Adversaries may create an account to maintain access",
+    "malicious_ratio": 0.8
+  },
+  "T1543": {
+    "name": "Create or Modify System Process",
+    "tactic": "Persistence",
+    "generators": ["system"],
+    "scenarios": ["service"],
+    "description": "Adversaries may create or modify system processes to maintain persistence",
+    "malicious_ratio": 0.7
+  },
+  "T1547": {
+    "name": "Boot or Logon Autostart Execution",
+    "tactic": "Persistence",
+    "generators": ["system"],
+    "scenarios": ["registry"],
+    "description": "Adversaries may configure autostart for persistence",
+    "malicious_ratio": 0.8
+  },
+  "T1505": {
+    "name": "Server Software Component",
+    "tactic": "Persistence",
+    "generators": ["web", "system"],
+    "scenarios": ["unauthorized", "file"],
+    "description": "Adversaries may abuse server software components for persistence",
+    "malicious_ratio": 0.7
+  },
+  "T1068": {
+    "name": "Exploitation for Privilege Escalation",
+    "tactic": "Privilege Escalation",
+    "generators": ["system", "ids"],
+    "scenarios": ["privilege", "exploit"],
+    "description": "Adversaries may exploit software vulnerabilities to escalate privileges",
+    "malicious_ratio": 0.9
+  },
+  "T1548": {
+    "name": "Abuse Elevation Control Mechanism",
+    "tactic": "Privilege Escalation",
+    "generators": ["system", "auth"],
+    "scenarios": ["privilege", "privilege_escalation"],
+    "description": "Adversaries may abuse mechanisms to elevate privileges",
+    "malicious_ratio": 0.7
+  },
+  "T1027": {
+    "name": "Obfuscated Files or Information",
+    "tactic": "Defense Evasion",
+    "generators": ["system"],
+    "scenarios": ["file"],
+    "description": "Adversaries may obfuscate files or information to hide artifacts",
+    "malicious_ratio": 0.8
+  },
+  "T1070": {
+    "name": "Indicator Removal",
+    "tactic": "Defense Evasion",
+    "generators": ["system"],
+    "scenarios": ["file"],
+    "description": "Adversaries may delete or modify artifacts to remove evidence",
+    "malicious_ratio": 0.8
+  },
+  "T1140": {
+    "name": "Deobfuscate/Decode Files or Information",
+    "tactic": "Defense Evasion",
+    "generators": ["system"],
+    "scenarios": ["process"],
+    "description": "Adversaries may decode obfuscated files to reveal payloads",
+    "malicious_ratio": 0.8
+  },
+  "T1110": {
+    "name": "Brute Force",
+    "tactic": "Credential Access",
+    "generators": ["auth"],
+    "scenarios": ["bruteforce"],
+    "description": "Adversaries may use brute force techniques to gain access",
+    "malicious_ratio": 0.95
+  },
+  "T1110.001": {
+    "name": "Brute Force: Password Guessing",
+    "tactic": "Credential Access",
+    "generators": ["auth"],
+    "scenarios": ["bruteforce"],
+    "description": "Adversaries may use password guessing to gain access",
+    "malicious_ratio": 0.95
+  },
+  "T1110.002": {
+    "name": "Brute Force: Password Cracking",
+    "tactic": "Credential Access",
+    "generators": ["auth"],
+    "scenarios": ["bruteforce"],
+    "description": "Adversaries may use password cracking to gain access",
+    "malicious_ratio": 0.9
+  },
+  "T1110.003": {
+    "name": "Brute Force: Password Spraying",
+    "tactic": "Credential Access",
+    "generators": ["auth", "web"],
+    "scenarios": ["bruteforce", "attack"],
+    "description": "Adversaries may use password spraying against many accounts",
+    "malicious_ratio": 0.95
+  },
+  "T1110.004": {
+    "name": "Brute Force: Credential Stuffing",
+    "tactic": "Credential Access",
+    "generators": ["auth", "web"],
+    "scenarios": ["bruteforce", "attack"],
+    "description": "Adversaries may use credential stuffing with breached credentials",
+    "malicious_ratio": 0.95
+  },
+  "T1003": {
+    "name": "OS Credential Dumping",
+    "tactic": "Credential Access",
+    "generators": ["system"],
+    "scenarios": ["process"],
+    "description": "Adversaries may attempt to dump credentials from the OS",
+    "malicious_ratio": 0.95
+  },
+  "T1555": {
+    "name": "Credentials from Password Stores",
+    "tactic": "Credential Access",
+    "generators": ["system"],
+    "scenarios": ["file"],
+    "description": "Adversaries may search for credentials from password stores",
+    "malicious_ratio": 0.85
+  },
+  "T1056": {
+    "name": "Input Capture",
+    "tactic": "Credential Access",
+    "generators": ["ids", "system"],
+    "scenarios": ["alert", "process"],
+    "description": "Adversaries may use methods to capture user input",
+    "malicious_ratio": 0.9
+  },
+  "T1018": {
+    "name": "Remote System Discovery",
+    "tactic": "Discovery",
+    "generators": ["firewall", "ids"],
+    "scenarios": ["portscan", "anomaly"],
+    "description": "Adversaries may attempt to get a list of other systems",
+    "malicious_ratio": 0.8
+  },
+  "T1046": {
+    "name": "Network Service Discovery",
+    "tactic": "Discovery",
+    "generators": ["firewall"],
+    "scenarios": ["portscan"],
+    "description": "Adversaries may attempt to get a list of services on remote systems",
+    "malicious_ratio": 0.9
+  },
+  "T1057": {
+    "name": "Process Discovery",
+    "tactic": "Discovery",
+    "generators": ["system"],
+    "scenarios": ["process"],
+    "description": "Adversaries may attempt to get information about running processes",
+    "malicious_ratio": 0.5
+  },
+  "T1082": {
+    "name": "System Information Discovery",
+    "tactic": "Discovery",
+    "generators": ["system"],
+    "scenarios": ["process"],
+    "description": "Adversaries may attempt to get detailed information about the OS",
+    "malicious_ratio": 0.6
+  },
+  "T1087": {
+    "name": "Account Discovery",
+    "tactic": "Discovery",
+    "generators": ["system", "cloud"],
+    "scenarios": ["user", "iam_changes"],
+    "description": "Adversaries may attempt to get a list of valid accounts",
+    "malicious_ratio": 0.7
+  },
+  "T1021": {
+    "name": "Remote Services",
+    "tactic": "Lateral Movement",
+    "generators": ["auth", "firewall"],
+    "scenarios": ["successful", "allowed"],
+    "description": "Adversaries may use valid accounts to log into remote services",
+    "malicious_ratio": 0.6
+  },
+  "T1021.001": {
+    "name": "Remote Services: Remote Desktop Protocol",
+    "tactic": "Lateral Movement",
+    "generators": ["auth", "firewall"],
+    "scenarios": ["successful", "allowed"],
+    "description": "Adversaries may use RDP for lateral movement",
+    "malicious_ratio": 0.6
+  },
+  "T1021.002": {
+    "name": "Remote Services: SMB/Windows Admin Shares",
+    "tactic": "Lateral Movement",
+    "generators": ["firewall", "auth"],
+    "scenarios": ["allowed", "successful"],
+    "description": "Adversaries may use SMB shares for lateral movement",
+    "malicious_ratio": 0.7
+  },
+  "T1021.004": {
+    "name": "Remote Services: SSH",
+    "tactic": "Lateral Movement",
+    "generators": ["auth"],
+    "scenarios": ["successful"],
+    "description": "Adversaries may use SSH for lateral movement",
+    "malicious_ratio": 0.5
+  },
+  "T1021.006": {
+    "name": "Remote Services: Windows Remote Management",
+    "tactic": "Lateral Movement",
+    "generators": ["auth", "system"],
+    "scenarios": ["privilege_escalation", "process"],
+    "description": "Adversaries may use WinRM for lateral movement",
+    "malicious_ratio": 0.7
+  },
+  "T1080": {
+    "name": "Taint Shared Content",
+    "tactic": "Lateral Movement",
+    "generators": ["system"],
+    "scenarios": ["file"],
+    "description": "Adversaries may deliver payloads via shared content",
+    "malicious_ratio": 0.8
+  },
+  "T1005": {
+    "name": "Data from Local System",
+    "tactic": "Collection",
+    "generators": ["system"],
+    "scenarios": ["file"],
+    "description": "Adversaries may search for files of interest on local systems",
+    "malicious_ratio": 0.7
+  },
+  "T1113": {
+    "name": "Screen Capture",
+    "tactic": "Collection",
+    "generators": ["system"],
+    "scenarios": ["process"],
+    "description": "Adversaries may capture the screen to gather information",
+    "malicious_ratio": 0.9
+  },
+  "T1071": {
+    "name": "Application Layer Protocol",
+    "tactic": "Command and Control",
+    "generators": ["firewall", "web"],
+    "scenarios": ["unusual_traffic", "normal"],
+    "description": "Adversaries may communicate using application layer protocols",
+    "malicious_ratio": 0.5
+  },
+  "T1071.001": {
+    "name": "Application Layer Protocol: Web Protocols",
+    "tactic": "Command and Control",
+    "generators": ["web", "firewall"],
+    "scenarios": ["normal", "unusual_traffic"],
+    "description": "Adversaries may communicate using HTTP/HTTPS",
+    "malicious_ratio": 0.6
+  },
+  "T1071.004": {
+    "name": "Application Layer Protocol: DNS",
+    "tactic": "Command and Control",
+    "generators": ["dns"],
+    "scenarios": ["tunneling"],
+    "description": "Adversaries may use DNS for command and control",
+    "malicious_ratio": 0.9
+  },
+  "T1095": {
+    "name": "Non-Application Layer Protocol",
+    "tactic": "Command and Control",
+    "generators": ["firewall"],
+    "scenarios": ["unusual_traffic"],
+    "description": "Adversaries may use non-application layer protocols for communication",
+    "malicious_ratio": 0.8
+  },
+  "T1573": {
+    "name": "Encrypted Channel",
+    "tactic": "Command and Control",
+    "generators": ["firewall", "ids"],
+    "scenarios": ["unusual_traffic", "anomaly"],
+    "description": "Adversaries may use encrypted channels to evade detection",
+    "malicious_ratio": 0.7
+  },
+  "T1568": {
+    "name": "Dynamic Resolution",
+    "tactic": "Command and Control",
+    "generators": ["dns"],
+    "scenarios": ["dga"],
+    "description": "Adversaries may dynamically establish connections with C2 servers",
+    "malicious_ratio": 0.95
+  },
+  "T1568.002": {
+    "name": "Dynamic Resolution: Domain Generation Algorithms",
+    "tactic": "Command and Control",
+    "generators": ["dns"],
+    "scenarios": ["dga"],
+    "description": "Adversaries may use DGA to dynamically identify destinations",
+    "malicious_ratio": 0.95
+  },
+  "T1041": {
+    "name": "Exfiltration Over C2 Channel",
+    "tactic": "Exfiltration",
+    "generators": ["firewall"],
+    "scenarios": ["unusual_traffic"],
+    "description": "Adversaries may steal data by exfiltrating over the C2 channel",
+    "malicious_ratio": 0.85
+  },
+  "T1048": {
+    "name": "Exfiltration Over Alternative Protocol",
+    "tactic": "Exfiltration",
+    "generators": ["dns", "firewall"],
+    "scenarios": ["tunneling", "unusual_traffic"],
+    "description": "Adversaries may exfiltrate data over alternative protocols",
+    "malicious_ratio": 0.9
+  },
+  "T1486": {
+    "name": "Data Encrypted for Impact",
+    "tactic": "Impact",
+    "generators": ["system"],
+    "scenarios": ["file"],
+    "description": "Adversaries may encrypt data on target systems (ransomware)",
+    "malicious_ratio": 0.95
+  },
+  "T1490": {
+    "name": "Inhibit System Recovery",
+    "tactic": "Impact",
+    "generators": ["system"],
+    "scenarios": ["process"],
+    "description": "Adversaries may delete or remove system recovery features",
+    "malicious_ratio": 0.95
+  },
+  "T1499": {
+    "name": "Endpoint Denial of Service",
+    "tactic": "Impact",
+    "generators": ["firewall"],
+    "scenarios": ["ddos"],
+    "description": "Adversaries may perform Endpoint DoS attacks",
+    "malicious_ratio": 0.95
+  },
+  "T1098": {
+    "name": "Account Manipulation",
+    "tactic": "Persistence",
+    "generators": ["cloud", "system"],
+    "scenarios": ["iam_changes", "user"],
+    "description": "Adversaries may manipulate accounts to maintain access",
+    "malicious_ratio": 0.8
+  },
+  "T1530": {
+    "name": "Data from Cloud Storage",
+    "tactic": "Collection",
+    "generators": ["cloud"],
+    "scenarios": ["bucket_access"],
+    "description": "Adversaries may access data from cloud storage",
+    "malicious_ratio": 0.7
+  },
+  "T1552": {
+    "name": "Unsecured Credentials",
+    "tactic": "Credential Access",
+    "generators": ["cloud", "system"],
+    "scenarios": ["key_creation", "file"],
+    "description": "Adversaries may search for unsecured credentials",
+    "malicious_ratio": 0.8
+  },
+  "T1580": {
+    "name": "Cloud Infrastructure Discovery",
+    "tactic": "Discovery",
+    "generators": ["cloud"],
+    "scenarios": ["suspicious_api"],
+    "description": "Adversaries may attempt to discover cloud infrastructure",
+    "malicious_ratio": 0.7
+  }
+}
