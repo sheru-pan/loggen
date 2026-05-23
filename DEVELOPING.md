@@ -134,6 +134,39 @@ When manually dispatched from a branch, the image is tagged with the branch name
 
 ---
 
+## 3.5. Auto-Syncing the Docker Hub Overview Page
+
+A second workflow at [.github/workflows/dockerhub-description.yml](.github/workflows/dockerhub-description.yml) keeps the Docker Hub repository overview in sync with [DOCKER.md](DOCKER.md) — so you never have to log in to hub.docker.com and copy-paste again.
+
+### When it runs
+
+- **Automatically** on every push to `main` that touches `DOCKER.md` (or the workflow file itself)
+- **Manually** from *Actions → "Sync Docker Hub description" → Run workflow*
+
+### What it pushes
+
+- **Long description (Overview tab):** entire contents of `DOCKER.md`
+- **Short description (header tag line):** the fixed string in the workflow file (`short-description:` field). Edit the workflow to change it.
+
+### Required GitHub secrets
+
+Re-uses the same secrets as the build workflow:
+- `DOCKERHUB_USERNAME` = `sheru`
+- `DOCKERHUB_TOKEN`    = your Docker Hub PAT (Read & Write scope or higher)
+
+> If the workflow fails with a 401/403, the PAT may not have permission to update repository metadata. Generate a new PAT with **Read, Write & Delete** scope at https://app.docker.com/settings/personal-access-tokens and update the `DOCKERHUB_TOKEN` secret. As a last resort, you can use your Docker Hub account password (less secure — not recommended).
+
+### First-time activation
+
+After merging this workflow to `main` for the first time, run it manually once so the existing Docker Hub overview gets replaced with `DOCKER.md`:
+
+1. Go to *Actions → "Sync Docker Hub description"*
+2. **Run workflow → Run workflow**
+
+Subsequent pushes that change `DOCKER.md` will trigger it automatically.
+
+---
+
 ## 4. Project Layout
 
 ```

@@ -1,0 +1,28 @@
+name: Sync Docker Hub description
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'DOCKER.md'
+      - '.github/workflows/dockerhub-description.yml'
+  workflow_dispatch:   # Allows manual trigger for first-time sync or on-demand refresh
+
+jobs:
+  dockerhub-description:
+    name: Push DOCKER.md to Docker Hub overview
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Update Docker Hub description
+        uses: peter-evans/dockerhub-description@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: sheru/loggen
+          short-description: "SOC analyst training log generator — 60 MITRE ATT&CK technique mappings, multi-arch"
+          readme-filepath: ./DOCKER.md
