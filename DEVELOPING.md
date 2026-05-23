@@ -146,6 +146,28 @@ The PyPI workflow triggers only on tags matching `pypi-v*`. The Docker workflow 
 
 You can also dispatch the workflow manually from the Actions tab and choose `pypi` or `testpypi` as the target.
 
+### Installing from TestPyPI to verify a pre-release
+
+TestPyPI is a sandbox — it does **not** mirror packages from real PyPI. So `pip install -i https://test.pypi.org/simple/ loggen-cli` will fail with "No matching distribution found for typer>=0.9.0" because typer (and all the other deps) only live on real PyPI.
+
+Always pass `--extra-index-url` so pip can fall back to real PyPI for dependencies:
+
+```bash
+pip install \
+  --index-url https://test.pypi.org/simple/ \
+  --extra-index-url https://pypi.org/simple/ \
+  loggen-cli
+```
+
+Or with pipx:
+
+```bash
+pipx install \
+  --index-url https://test.pypi.org/simple/ \
+  --pip-args="--extra-index-url https://pypi.org/simple/" \
+  loggen-cli
+```
+
 ### One-time setup: register Trusted Publishers
 
 This needs to be done **once per index** (TestPyPI and PyPI).
@@ -225,6 +247,9 @@ Check the tag format. The workflow routes to TestPyPI only if the tag contains `
 
 **Nothing happened when I pushed a tag**
 Check the prefix. The PyPI workflow ignores anything that doesn't start with `pypi-v`. The Docker workflow ignores anything that doesn't start with `docker-v`. A bare `v0.3.0` tag won't trigger either workflow.
+
+**`pip install -i https://test.pypi.org/simple/ loggen-cli` fails with "No matching distribution found for typer>=0.9.0"**
+TestPyPI does not mirror real-PyPI packages, so dependencies aren't there. Add `--extra-index-url https://pypi.org/simple/` (see the "Installing from TestPyPI" section above).
 
 ---
 
