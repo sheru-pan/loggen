@@ -1,0 +1,35 @@
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+.pytest_cache/
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Documentation (not needed in image)
+DOCKER.md
+GETTING_STARTED.md
+
+# Build artifacts
+build/
+dist/
+*.log
